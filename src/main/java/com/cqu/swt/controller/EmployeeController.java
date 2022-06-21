@@ -1,17 +1,15 @@
 package com.cqu.swt.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cqu.swt.common.R;
 import com.cqu.swt.entity.Employee;
 import com.cqu.swt.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
@@ -93,5 +91,27 @@ public class EmployeeController {
 
         employeeService.save(employee);
         return R.success("新增员工成功");
+    }
+
+    /**
+     * 分页查询员工信息
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name){
+    log.info("page={},pageSize={},name={}",page,pageSize,name);
+    //分页构造器
+    Page pageInfo=new Page(page,pageSize);
+    //条件构造器
+    LambdaQueryWrapper<Employee> queryWrapper=new LambdaQueryWrapper<>();
+    //添加过滤条件
+    queryWrapper.like(org.apache.commons.lang.StringUtils.isNotEmpty(name) ,Employee::getName,name);
+    queryWrapper.orderByDesc(Employee::getUpdateTime);
+    //执行查询
+    employeeService.page(pageInfo,queryWrapper);
+    return R.success(pageInfo);
     }
 }

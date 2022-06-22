@@ -49,7 +49,7 @@ public class Category {
     private Long updateUser;
 
 
-    //是否删除
+//    //是否删除
 //    private Integer isDeleted;
 
 }

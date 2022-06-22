@@ -73,7 +73,7 @@ public class DishController {
         //执行分页查询
         dishService.page(pageInfo,queryWrapper);
 
-        //对象拷贝
+        //对象拷贝，不拷贝records
         BeanUtils.copyProperties(pageInfo,dishDtoPage,"records");
 
         List<Dish> records = pageInfo.getRecords();
@@ -123,7 +123,7 @@ public class DishController {
 
         dishService.updateWithFlavor(dishDto);
 
-        return R.success("新增菜品成功");
+        return R.success("修改菜品成功");
     }
 
 

@@ -6,10 +6,12 @@ import com.cqu.swt.common.R;
 import com.cqu.swt.dto.DishDto;
 import com.cqu.swt.entity.Category;
 import com.cqu.swt.entity.Dish;
+import com.cqu.swt.entity.DishFlavor;
 import com.cqu.swt.service.CategoryService;
 import com.cqu.swt.service.DishFlavorService;
 import com.cqu.swt.service.DishService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -122,5 +124,36 @@ public class DishController {
         dishService.updateWithFlavor(dishDto);
 
         return R.success("新增菜品成功");
+    }
+
+
+    @GetMapping("/list")
+    public R<List<DishDto>> list(Dish dish) {
+        log.info("dish:{}", dish);
+        //条件构造器
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotEmpty(dish.getName()), Dish::getName, dish.getName());
+        queryWrapper.eq(null != dish.getCategoryId(), Dish::getCategoryId, dish.getCategoryId());
+        //添加条件，查询状态为1（起售状态）的菜品
+        queryWrapper.eq(Dish::getStatus,1);
+        queryWrapper.orderByDesc(Dish::getUpdateTime);
+
+        List<Dish> dishs = dishService.list(queryWrapper);
+
+        List<DishDto> dishDtos = dishs.stream().map(item -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            Category category = categoryService.getById(item.getCategoryId());
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+            LambdaQueryWrapper<DishFlavor> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(DishFlavor::getDishId, item.getId());
+
+            dishDto.setFlavors(dishFlavorService.list(wrapper));
+            return dishDto;
+        }).collect(Collectors.toList());
+
+        return R.success(dishDtos);
     }
 }

@@ -99,7 +99,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper,Dish> implements Dis
      */
     @Transactional
     public void removeWithFlavor(List<Long> ids) {
-        ///select count(*) from setmeal where id in (1,2,3) and status = 1
+        ///select count(*) from dish where id in (1,2,3) and status = 1
         //查询菜品状态，确定是否可用删除
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.in(Dish::getId,ids);
@@ -111,13 +111,13 @@ public class DishServiceImpl extends ServiceImpl<DishMapper,Dish> implements Dis
             throw new CustomException("菜品正在售卖中，不能删除");
         }
 
-        //如果可以删除，先删除套餐表中的数据---setmeal
+        //如果可以删除，先删除套餐表中的数据---dish
         this.removeByIds(ids);
 
-        //delete from setmeal_dish where setmeal_id in (1,2,3)
+        //delete from dish_flavor where dish_id in (1,2,3)
         LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.in(DishFlavor::getDishId,ids);
-        //删除关系表中的数据----setmeal_dish
+        //删除关系表中的数据----dish_flavor
         dishFlavorService.remove(lambdaQueryWrapper);
     }
 }

@@ -157,7 +157,7 @@ public class DishController {
 
         dishService.removeWithFlavor(ids);
 
-        return R.success("套餐数据删除成功");
+        return R.success("菜品数据删除成功");
     }
 
     @GetMapping("/list")

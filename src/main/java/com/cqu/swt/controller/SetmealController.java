@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cqu.swt.common.R;
 import com.cqu.swt.dto.SetmealDto;
 import com.cqu.swt.entity.Category;
+import com.cqu.swt.entity.Employee;
 import com.cqu.swt.entity.Setmeal;
+import com.cqu.swt.entity.SetmealDish;
 import com.cqu.swt.service.CategoryService;
 import com.cqu.swt.service.SetmealDishService;
 import com.cqu.swt.service.SetmealService;
@@ -15,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,28 +29,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/setmeal")
 @Slf4j
 public class SetmealController {
-
     @Autowired
     private SetmealService setmealService;
-
     @Autowired
     private CategoryService categoryService;
-
-    @Autowired
-    private SetmealDishService setmealDishService;
-
     /**
      * 新增套餐
      * @param setmealDto
      * @return
      */
     @PostMapping
-    public R<String> save(@RequestBody SetmealDto setmealDto){
-        log.info("套餐信息：{}",setmealDto);
-
+    public R save(@RequestBody SetmealDto setmealDto){
         setmealService.saveWithDish(setmealDto);
-
-        return R.success("新增套餐成功");
+        return R.success("新城套餐成功");
     }
 
     /**
@@ -96,10 +90,46 @@ public class SetmealController {
     }
 
     /**
-     * 删除套餐
+     * 根据id查询套餐
      * @param ids
      * @return
      */
+    @GetMapping("/{ids}")
+    public R getSetmeal(@PathVariable Long ids){
+        SetmealDto setmealDto = setmealService.getSetmeal(ids);
+        return R.success(setmealDto);
+    }
+
+    /**
+     * 更新套餐信息
+     * @param setmealDto
+     * @return
+     */
+    @PutMapping
+    public R updateSetmeal(@RequestBody SetmealDto setmealDto){
+        setmealService.updateSetmeal(setmealDto);
+        return R.success("更新套餐成功!");
+    }
+
+    /**
+     * 修改销售状态
+     * @param status
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public R changeStatus(@PathVariable int status,String ids){
+        String[] idList = ids.split(",");
+        for (String id : idList) {
+            Setmeal setmeal = new Setmeal();
+            setmeal.setId(Long.parseLong(id));
+            setmeal.setStatus(status);
+
+            setmealService.updateById(setmeal);
+        }
+        return R.success("更新状态成功");
+    }
+
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids:{}",ids);
@@ -108,17 +138,18 @@ public class SetmealController {
 
         return R.success("套餐数据删除成功");
     }
-
     @GetMapping("/list")
-    public R<List<Setmeal>> list(Setmeal setmeal) {
-        log.info("setmeal:{}", setmeal);
-        //条件构造器
-        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotEmpty(setmeal.getName()), Setmeal::getName, setmeal.getName());
-        queryWrapper.eq(null != setmeal.getCategoryId(), Setmeal::getCategoryId, setmeal.getCategoryId());
-        queryWrapper.eq(null != setmeal.getStatus(), Setmeal::getStatus, setmeal.getStatus());
-        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
-
-        return R.success(setmealService.list(queryWrapper));
+    public R getList(Long categoryId,Integer status){
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Setmeal::getStatus,status).eq(Setmeal::getCategoryId,categoryId);
+        List<Setmeal> list = setmealService.list(wrapper);
+        return R.success(list);
     }
+
+    @GetMapping("/dish/{id}")
+    public R getSetMeal(@PathVariable Long id){
+        Setmeal setmeal = setmealService.getById(id);
+        return R.success(setmeal);
+    }
+
 }

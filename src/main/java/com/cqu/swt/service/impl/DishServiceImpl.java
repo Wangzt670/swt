@@ -2,6 +2,7 @@ package com.cqu.swt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqu.swt.common.CustomException;
 import com.cqu.swt.dto.DishDto;
 import com.cqu.swt.entity.Dish;
 import com.cqu.swt.entity.DishFlavor;
@@ -89,5 +90,34 @@ public class DishServiceImpl extends ServiceImpl<DishMapper,Dish> implements Dis
         }).collect(Collectors.toList());
 
         dishFlavorService.saveBatch(flavors);
+    }
+
+
+    /**
+     * 删除菜品
+     * @param
+     */
+    @Transactional
+    public void removeWithFlavor(List<Long> ids) {
+        ///select count(*) from setmeal where id in (1,2,3) and status = 1
+        //查询菜品状态，确定是否可用删除
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.in(Dish::getId,ids);
+        queryWrapper.eq(Dish::getStatus,1);
+
+        int count = this.count(queryWrapper);
+        if(count > 0){
+            //如果不能删除，抛出一个业务异常
+            throw new CustomException("菜品正在售卖中，不能删除");
+        }
+
+        //如果可以删除，先删除套餐表中的数据---setmeal
+        this.removeByIds(ids);
+
+        //delete from setmeal_dish where setmeal_id in (1,2,3)
+        LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(DishFlavor::getDishId,ids);
+        //删除关系表中的数据----setmeal_dish
+        dishFlavorService.remove(lambdaQueryWrapper);
     }
 }

@@ -7,6 +7,7 @@ import com.cqu.swt.dto.DishDto;
 import com.cqu.swt.entity.Category;
 import com.cqu.swt.entity.Dish;
 import com.cqu.swt.entity.DishFlavor;
+import com.cqu.swt.entity.Setmeal;
 import com.cqu.swt.service.CategoryService;
 import com.cqu.swt.service.DishFlavorService;
 import com.cqu.swt.service.DishService;
@@ -126,6 +127,38 @@ public class DishController {
         return R.success("修改菜品成功");
     }
 
+    /**
+     * 修改菜品状态
+     * @param status
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public R changeStatus(@PathVariable int status,String ids){
+        String[] idList = ids.split(",");
+        for (String id : idList) {
+            Dish dish = new Dish();
+            dish.setId(Long.parseLong(id));
+            dish.setStatus(status);
+
+            dishService.updateById(dish);
+        }
+        return R.success("更新状态成功");
+    }
+
+    /**
+     * 删除菜品
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids){
+        log.info("ids:{}",ids);
+
+        dishService.removeWithFlavor(ids);
+
+        return R.success("套餐数据删除成功");
+    }
 
     @GetMapping("/list")
     public R<List<DishDto>> list(Dish dish) {

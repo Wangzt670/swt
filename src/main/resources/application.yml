@@ -8,17 +8,18 @@ spring:
       names:
         master,slave
       # 主数据源
+      #把ip换成群里ip
       master:
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://填群里的ip1/swt?characterEncoding=utf-8
+        url: jdbc:mysql://ip1的位置/swt?characterEncoding=utf-8
         username: root
         password: swt666
       # 丛数据源
       slave:
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://填群里的ip2/swt?characterEncoding=utf-8
+        url: jdbc:mysql://ip2的位置/swt?characterEncoding=utf-8
         username: root
         password: swt666
     masterslave:

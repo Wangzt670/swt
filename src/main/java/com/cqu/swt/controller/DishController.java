@@ -167,10 +167,10 @@ public class DishController {
         String key = "dish "+ dish.getCategoryId() + "_" + dish.getStatus();//dish_1397844391040167938_1
         //先从redis中获取锾存数据
         dishDtoList = (List<DishDto>) redisTemplate.opsForValue().get(key) ;
-        if(dishDtoList != null) {
-            //如果存在，直接返回，无需查询数据库
-            return R.success(dishDtoList);
-        }
+//        if(dishDtoList != null) {
+//            //如果存在，直接返回，无需查询数据库
+//            return R.success(dishDtoList);
+//        }
             //构造查询条件
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getCategoryId() != null ,Dish::getCategoryId,dish.getCategoryId());

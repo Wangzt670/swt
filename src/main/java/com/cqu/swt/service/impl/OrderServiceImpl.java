@@ -1,21 +1,34 @@
 package com.cqu.swt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqu.swt.common.BaseContext;
 import com.cqu.swt.common.CustomException;
+import com.cqu.swt.common.R;
+import com.cqu.swt.dto.OrdersDto;
 import com.cqu.swt.entity.*;
+import com.cqu.swt.mapper.OrderDetailMapper;
 import com.cqu.swt.mapper.OrderMapper;
+import com.cqu.swt.mapper.UserMapper;
 import com.cqu.swt.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -32,9 +45,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     @Autowired
     private AddressBookService addressBookService;
 
+
+    @Autowired
+    private UserMapper userMapper;
+
     @Autowired
     private OrderDetailService orderDetailService;
 
+    @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
     /**
      * 用户下单
      * @param orders
@@ -105,4 +126,82 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         //清空购物车数据
         shoppingCartService.remove(wrapper);
     }
+    @Override
+    public R<Page> pageQuery(Page pageInfo, String number, String beginTime, String endTime) {
+        Page<OrdersDto> ordersDtoPage = new Page<>();
+        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotEmpty(number),Orders::getNumber,number);
+        queryWrapper.between(StringUtils.isNotEmpty(beginTime) || StringUtils.isNotEmpty(endTime),Orders::getOrderTime,beginTime,endTime);
+        queryWrapper.orderByDesc(Orders::getOrderTime);
+        orderMapper.selectPage(pageInfo,queryWrapper);
+
+        BeanUtils.copyProperties(pageInfo,ordersDtoPage,"records");
+        List<Orders> records = pageInfo.getRecords();
+        List<OrdersDto> ordersDtoList = new ArrayList<>();
+        for (Orders record : records) {
+            OrdersDto ordersDto = new OrdersDto();
+            BeanUtils.copyProperties(record,ordersDto);
+            Long userId = record.getUserId();
+
+            User user = userMapper.selectById(userId);
+
+            if (user != null){
+                String name = user.getName();
+                ordersDto.setUserName(name);
+            }
+            ordersDtoList.add(ordersDto);
+        }
+        ordersDtoPage.setRecords(ordersDtoList);
+        return R.success(ordersDtoPage);
+    }
+
+    @Override
+    public void updateStatusById(OrdersDto ordersDto) {
+        Long id = ordersDto.getId();
+        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Orders::getId,id);
+        Orders orders = orderMapper.selectOne(queryWrapper);
+        orders.setStatus(ordersDto.getStatus());
+        orderMapper.updateById(orders);
+    }
+
+    @Override
+    public R<Page> userPage(Page pageInfo) {
+
+        try {
+            Page<OrdersDto> dtoPage = new Page<>();
+            LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.orderByDesc(Orders::getOrderTime);
+            queryWrapper.eq(Orders::getUserId, BaseContext.getCurrentId());
+            orderMapper.selectPage(pageInfo,queryWrapper);
+            BeanUtils.copyProperties(pageInfo,dtoPage,"records");
+            List<Orders> records = pageInfo.getRecords();
+            List<OrdersDto> ordersDtoList = new ArrayList<>();
+            for (Orders record : records) {
+                OrdersDto ordersDto = new OrdersDto();
+                BeanUtils.copyProperties(record,ordersDto);
+                Long userId = record.getUserId();
+                LambdaQueryWrapper<OrderDetail> queryWrapper1 = new LambdaQueryWrapper<>();
+                queryWrapper1.eq(OrderDetail::getOrderId,record.getId());
+                List<OrderDetail> orderDetails = orderDetailMapper.selectList(queryWrapper1);
+                ordersDto.setOrderDetails(orderDetails);
+
+                User user = userMapper.selectById(userId);
+
+                if (user != null){
+                    String name = user.getName();
+                    ordersDto.setUserName(name);
+                }
+                ordersDtoList.add(ordersDto);
+            }
+            dtoPage.setRecords(ordersDtoList);
+            return R.success(dtoPage);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("订单数据加载失败");
+        }
+
+    }
+
+
 }

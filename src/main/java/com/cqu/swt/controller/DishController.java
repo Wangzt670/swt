@@ -212,4 +212,35 @@ public class DishController {
             return R.success(dishDtoList);
     }
 
+    /**
+     * 更新状态
+     * @param status
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public R changeStatus(@PathVariable int status,String ids){
+        String[] idList = ids.split(",");
+        for (String id : idList) {
+            Dish dish = new Dish();
+            dish.setId(Long.parseLong(id));
+            dish.setStatus(status);
+
+            dishService.updateById(dish);
+        }
+        return R.success("更新状态成功");
+    }
+
+    /**
+     * 删除菜品
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids){
+        log.info("ids:{}",ids);
+        dishService.removeWithFlavor(ids);
+        return R.success("菜品数据删除成功");
+    }
+
 }

@@ -3,6 +3,7 @@ package com.cqu.swt.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cqu.swt.common.MailUtils;
 import com.cqu.swt.common.R;
+import com.cqu.swt.common.RedisUtils;
 import com.cqu.swt.entity.User;
 import com.cqu.swt.service.UserService;
 import com.cqu.swt.utils.ValidateCodeUtils;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +38,12 @@ public class UserController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     /**
      * 发送邮箱验证码
@@ -113,5 +122,10 @@ public class UserController {
             return R.success(user);
         }
         return R.error("登录失败");
+    }
+
+    @PostMapping("/loginout")
+    public R<String> logout() {
+        return userService.logout();
     }
 }

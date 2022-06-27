@@ -99,8 +99,16 @@
             <version>4.0.0-RC1</version>
         </dependency>
 
-    </dependencies>
 
+
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+    </dependencies>
     <build>
         <plugins>
             <plugin>

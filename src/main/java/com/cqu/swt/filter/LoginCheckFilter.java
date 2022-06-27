@@ -39,7 +39,13 @@ public class LoginCheckFilter implements Filter {
                 "/backend/**",//静态资源
                 "/front/**",//静态资源
                 "/user/sendMsg",//发送短信
-                "/user/login"//移动端登录
+                "/user/login",//移动端登录
+
+                //接口文档请求路径
+                "/doc.html",
+                "/web.jars/**",
+                "/swagger-resources",
+                "/v2/api-docs"
         };
 
         //2、判断本次请求是否需要处理

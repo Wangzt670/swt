@@ -1,15 +1,15 @@
 package com.cqu.swt.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cqu.swt.common.MailUtils;
 import com.cqu.swt.common.R;
 import com.cqu.swt.common.RedisUtils;
+import com.cqu.swt.entity.Email;
 import com.cqu.swt.entity.User;
+import com.cqu.swt.service.EmailService;
 import com.cqu.swt.service.UserService;
 import com.cqu.swt.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
@@ -45,6 +44,8 @@ public class UserController {
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private EmailService emailService;
     /**
      * 发送邮箱验证码
      * @param user
@@ -64,7 +65,14 @@ public class UserController {
             //SMSUtils.sendMessage("swt外卖","",phone,code);
 
             //调用邮箱服务发送邮件
-            MailUtils.sendMail(user.getPhone(),code);
+            //MailUtils.sendMail(user.getPhone(),code);
+
+            //加入线程池，异步发送邮件
+            Email email=new Email();
+            email.setUsername(phone);
+            email.setCode(code);
+            emailService.senderEmail(email);
+
             //需要将生成的验证码保存到Session
             //session.setAttribute(phone,code);
 

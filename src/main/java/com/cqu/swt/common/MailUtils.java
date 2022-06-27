@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class MailUtils {
     public static void main(String[] args) {
-        sendMail("986304049@qq.com","测试邮件发送成功！！");
+        sendMail("986304049@qq.com","测试邮件发送成果");
     }
 
     /**

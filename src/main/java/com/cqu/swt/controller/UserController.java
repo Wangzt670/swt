@@ -9,6 +9,7 @@ import com.cqu.swt.service.EmailService;
 import com.cqu.swt.service.UserService;
 import com.cqu.swt.utils.ValidateCodeUtils;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/sendMsg")
+    @ApiOperation(value = "发送信息接口")
     public R<String> sendMsg(@RequestBody User user, HttpSession session){
         //获取手机号
         String phone = user.getPhone();
@@ -94,6 +96,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
+    @ApiOperation(value = "登录接口")
     public R<User> login(@RequestBody Map map, HttpSession session){
         log.info(map.toString());
 
@@ -135,6 +138,7 @@ public class UserController {
     }
 
     @PostMapping("/loginout")
+    @ApiOperation(value = "退出接口")
     public R<String> logout() {
         return userService.logout();
     }

@@ -34,7 +34,7 @@ public class AddressBookController {
      */
     @PostMapping
     @ApiOperation(value = "存入地址簿" )
-    @ApiImplicitParam(name = "AddressBook",value = "地址簿信息",required = true)
+//    @ApiImplicitParam(name = "addressBook",value = "地址簿信息",required = true)
     public R<AddressBook> save(@RequestBody AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
         log.info("addressBook:{}", addressBook);
@@ -47,7 +47,7 @@ public class AddressBookController {
      */
     @PutMapping("default")
     @ApiOperation(value = "设置默认地址簿信息")
-    @ApiImplicitParam(name = "AddressBook",value = "地址簿信息",required = true)
+//    @ApiImplicitParam(name = "addressBook",value = "地址簿信息",required = true)
     public R<AddressBook> setDefault(@RequestBody AddressBook addressBook) {
         log.info("addressBook:{}", addressBook);
         LambdaUpdateWrapper<AddressBook> wrapper = new LambdaUpdateWrapper<>();
@@ -67,7 +67,7 @@ public class AddressBookController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "根据id查询地址")
-    @ApiImplicitParam(name = "id",value = "用户id",required = true)
+//    @ApiImplicitParam(name = "id",value = "用户id",required = true)
     public R get(@PathVariable Long id) {
         AddressBook addressBook = addressBookService.getById(id);
         if (addressBook != null) {
@@ -102,7 +102,7 @@ public class AddressBookController {
      */
     @GetMapping("/list")
     @ApiOperation("查询地址簿信息")
-    @ApiImplicitParam(name = "AddressBook",value = "地址簿信息",required = true)
+//    @ApiImplicitParam(name = "addressBook",value = "地址簿信息",required = true)
     public R<List<AddressBook>> list(AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
         log.info("addressBook:{}", addressBook);

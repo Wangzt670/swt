@@ -40,6 +40,7 @@ public class OrderController {
      * @return
      */
     @PostMapping("/submit")
+    @ApiOperation(value = "下单")
     @ApiImplicitParam(name = "orders",value="订单",required = true)
     public R<String> submit(@RequestBody Orders orders){
         log.info("订单数据：{}",orders);

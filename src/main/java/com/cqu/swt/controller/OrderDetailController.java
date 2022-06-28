@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/orderDetail")
-@Api(value = "订单内容相关接口")
+@Api(tags = "订单内容相关接口")
 public class OrderDetailController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class OrderDetailController {
 
 
     @GetMapping("/{id}")
-    @ApiOperation("获取主键")
+    @ApiOperation(value = "获取主键接口")
     @ApiImplicitParam(name = "id", value = "主键", required = true)
     public R<List<OrderDetail>> getById(@PathVariable Long id){
 

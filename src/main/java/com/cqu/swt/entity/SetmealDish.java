@@ -2,6 +2,7 @@ package com.cqu.swt.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 //菜品关系实体映射
 @Data
+@ApiModel("套餐菜品")
 public class SetmealDish implements Serializable {
 
     private static final long serialVersionUID = 1L;

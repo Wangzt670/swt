@@ -52,6 +52,7 @@ public class DishController {
      */
     @PostMapping
     @ApiOperation(value = "新增菜品接口")
+    @ApiImplicitParam(name = "dishDto", value = "菜品Dto", required = true)
     public R<String> save(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
 
@@ -126,6 +127,7 @@ public class DishController {
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "套餐id查询接口")
+    @ApiImplicitParam(name = "id" ,value = "菜品id", required = true)
     public R<DishDto> get(@PathVariable Long id){
 
         DishDto dishDto = dishService.getByIdWithFlavor(id);
@@ -140,6 +142,7 @@ public class DishController {
      */
     @PutMapping
     @ApiOperation(value = "修改菜品接口")
+    @ApiImplicitParam(name = "dishDto", value = "菜品Dto", required = true)
     public R<String> update(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
 
@@ -161,6 +164,7 @@ public class DishController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "菜品条件查询接口")
+//    @ApiImplicitParam(name = "dish", value = "菜品", required = true)
     public R<List<DishDto>> list(Dish dish){
         List<DishDto> dishDtoList = null;
         //动态构造key
@@ -220,6 +224,11 @@ public class DishController {
      */
     @PostMapping("/status/{status}")
     @ApiOperation(value = "更新状态接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "status", value = "菜品状态", required = true),
+            @ApiImplicitParam(name = "ids", value = "菜品id", required = true),
+
+    })
     public R changeStatus(@PathVariable int status,String ids){
         String[] idList = ids.split(",");
         for (String id : idList) {
@@ -239,6 +248,7 @@ public class DishController {
      */
     @DeleteMapping
     @ApiOperation(value = "删除菜品接口")
+    @ApiImplicitParam(name = "ids", value = "菜品id", required = true)
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids:{}",ids);
         dishService.removeWithFlavor(ids);

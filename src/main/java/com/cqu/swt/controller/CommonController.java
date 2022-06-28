@@ -1,6 +1,10 @@
 package com.cqu.swt.controller;
 
 import com.cqu.swt.common.R;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/common")
 @Slf4j
+@Api(tags = "工具相关接口")
 public class CommonController {
 
     @Value("${swt.path}")
@@ -33,6 +38,8 @@ public class CommonController {
      * @return
      */
     @PostMapping("/upload")
+    @ApiOperation(value = "文件上传下载接口")
+//    @ApiImplicitParam(name = "file", value = "上传文件", required = true)
     public R<String> upload(MultipartFile file){
         //file是一个临时文件，需要转存到指定位置，否则本次请求完成后临时文件会删除
         log.info(file.toString());
@@ -67,6 +74,11 @@ public class CommonController {
      * @param response
      */
     @GetMapping("/download")
+    @ApiOperation(value = "文件下载接口")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "name", value = "文件名", required = true),
+//            @ApiImplicitParam(name = "response", value = "返回信息", required = true),
+//    })
     public void download(String name, HttpServletResponse response){
 
         try {

@@ -5,6 +5,7 @@ package com.cqu.swt.entity;
  * @date 2022/6/24
  */
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
  * 用户信息
  */
 @Data
+@ApiModel("用户")
 public class User implements Serializable{
     private static final long serialVersionUID = 1L;
     @ApiModelProperty("主键")

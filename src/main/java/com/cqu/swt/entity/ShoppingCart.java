@@ -51,5 +51,6 @@ public class ShoppingCart implements Serializable {
     @ApiModelProperty("图片")
     private String image;
 
+    @ApiModelProperty("创建时间")
     private LocalDateTime createTime;
 }

@@ -2,12 +2,14 @@ package com.cqu.swt.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@ApiModel("员工")
 public class Employee implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -15,7 +17,7 @@ public class Employee implements Serializable {
     private Long id;
     @ApiModelProperty("用户姓名 ")
     private String username;
-
+    @ApiModelProperty("昵称")
     private String name;
     @ApiModelProperty("密码 ")
     private String password;

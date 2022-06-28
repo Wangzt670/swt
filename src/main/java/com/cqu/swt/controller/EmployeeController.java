@@ -109,7 +109,7 @@ public class EmployeeController {
      * @return
      */
     @GetMapping("/page")
-    @ApiOperation(value = "员工查询接口")
+    @ApiOperation(value = "员工分页查询接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page",value="页码",required = true),
             @ApiImplicitParam(name = "pageSize",value="每页记录数",required = true),
@@ -146,7 +146,11 @@ public class EmployeeController {
         return  R.success("修改成功");
 
     }
+
+
     @GetMapping("/{id}")
+    @ApiOperation(value = "员工查询接口")
+    @ApiImplicitParam(name = "id", value = "id", required = true)
     public R<Employee> getById(@PathVariable Long id){
     log.info("id查询");
     Employee employee=employeeService.getById(id);

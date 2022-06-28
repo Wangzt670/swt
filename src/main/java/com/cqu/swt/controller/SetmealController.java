@@ -12,6 +12,8 @@ import com.cqu.swt.service.CategoryService;
 import com.cqu.swt.service.SetmealDishService;
 import com.cqu.swt.service.SetmealService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -156,6 +158,10 @@ public class SetmealController {
     }
     @GetMapping("/list")
     @ApiOperation(value = "套餐list")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "categoryId", value = "分类id", required = true),
+            @ApiImplicitParam(name = "status", value = "状态", required = true),
+    })
 
     public R getList(Long categoryId,Integer status){
         LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();

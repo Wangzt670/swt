@@ -8,6 +8,7 @@ import com.cqu.swt.entity.User;
 import com.cqu.swt.service.EmailService;
 import com.cqu.swt.service.UserService;
 import com.cqu.swt.utils.ValidateCodeUtils;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @Slf4j
+@Api(tags = "用户相关接口")
 public class UserController {
     @Autowired
     private UserService userService;

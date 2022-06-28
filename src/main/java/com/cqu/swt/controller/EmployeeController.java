@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cqu.swt.common.R;
 import com.cqu.swt.entity.Employee;
 import com.cqu.swt.service.EmployeeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -16,6 +20,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @RestController
 @RequestMapping("/employee")
+@Api(tags = "员工相关接口")
 public class EmployeeController {
 
     //注入依赖
@@ -29,6 +34,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/login")
+    @ApiOperation(value = "员工登录接口")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
 
         //1、将页面提交的密码password进行md5加密处理
@@ -66,6 +72,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/logout")
+    @ApiOperation(value = "员工退出接口")
     public R<String> logout(HttpServletRequest request){
         //清理Session中保存的当前登录员工的id
         request.getSession().removeAttribute("employee");
@@ -78,6 +85,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping
+    @ApiOperation(value = "员工新增接口")
     public R<String> save(HttpServletRequest request,@RequestBody Employee employee){
         log.info("新增员工,员工信息:{}",employee.toString());
         //使用md5加密设置初始密码12345，员工可自行修改
@@ -101,6 +109,13 @@ public class EmployeeController {
      * @return
      */
     @GetMapping("/page")
+    @ApiOperation(value = "员工查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value="页码",required = true),
+            @ApiImplicitParam(name = "pageSize",value="每页记录数",required = true),
+            @ApiImplicitParam(name = "name",value="员工名称",required = false),
+
+    })
     public R<Page> page(int page, int pageSize, String name){
     log.info("page={},pageSize={},name={}",page,pageSize,name);
     //分页构造器
@@ -121,6 +136,7 @@ public class EmployeeController {
      * @return
      */
     @PutMapping
+    @ApiOperation(value = "员工修改接口")
     public  R<String> update(HttpServletRequest request,@RequestBody Employee employee){
         log.info(employee.toString());
         Long empID=(Long)request.getSession().getAttribute("employee");

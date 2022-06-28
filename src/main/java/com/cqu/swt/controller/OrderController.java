@@ -8,6 +8,10 @@ import com.cqu.swt.entity.OrderDetail;
 import com.cqu.swt.entity.Orders;
 import com.cqu.swt.service.OrderDetailService;
 import com.cqu.swt.service.OrderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +25,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/order")
+@Api(tags = "订单相关接口")
 public class OrderController {
 
     @Autowired
@@ -35,6 +40,7 @@ public class OrderController {
      * @return
      */
     @PostMapping("/submit")
+    @ApiImplicitParam(name = "orders",value="订单",required = true)
     public R<String> submit(@RequestBody Orders orders){
         log.info("订单数据：{}",orders);
         orderService.submit(orders);
@@ -43,18 +49,33 @@ public class OrderController {
 
 
     @GetMapping("/page")
+    @ApiOperation(value = "显示订单页面")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页面", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "页面大小", required = true),
+            @ApiImplicitParam(name = "number", value = "数量", required = true),
+            @ApiImplicitParam(name = "beginTime", value = "开始时间", required = true),
+            @ApiImplicitParam(name = "endTime", value = "结束时间", required = true),
+    })
     public R<Page> page(int page, int pageSize, String number, String beginTime, String endTime){
 
         Page pageInfo = new Page<>(page,pageSize);
         return orderService.pageQuery(pageInfo,number,beginTime,endTime);
     }
     @PutMapping
+    @ApiOperation(value = "修改订单状态")
+    @ApiImplicitParam(name = "ordersDto", value = "订单dto", required = true)
     public R<String> status(@RequestBody OrdersDto ordersDto){
         orderService.updateStatusById(ordersDto);
         return R.success("修改订单状态成功！");
     }
 
     @GetMapping("/userPage")
+    @ApiOperation(value = "用户界面")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页面", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "页面大小", required = true)
+    })
     public R<Page> userPage(int page,int pageSize){
         Page pageInfo = new Page<>(page,pageSize);
         return orderService.userPage(pageInfo);
@@ -63,6 +84,8 @@ public class OrderController {
 
     @DeleteMapping
     @Transactional(rollbackFor = Exception.class)
+    @ApiOperation(value = "删除订单")
+    @ApiImplicitParam(name = "id", value = "主键", required = true)
     public R<String> deleteOrder(Long id){
         LambdaQueryWrapper<OrderDetail> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(OrderDetail::getOrderId,id);
@@ -73,6 +96,8 @@ public class OrderController {
 
 
     @PostMapping("/again")
+    @ApiOperation(value = "再次添加订单")
+    @ApiImplicitParam(name = "orders", value = "订单", required = true)
     public R<String> addOrderAgain(@RequestBody Orders orders){
         if (orders.getId() != null){
             return R.success("成功！");

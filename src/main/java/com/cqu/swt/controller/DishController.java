@@ -10,6 +10,10 @@ import com.cqu.swt.entity.DishFlavor;
 import com.cqu.swt.service.CategoryService;
 import com.cqu.swt.service.DishFlavorService;
 import com.cqu.swt.service.DishService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dish")
 @Slf4j
+@Api(tags = "菜品相关接口")
 public class DishController {
     @Autowired
     private DishService dishService;
@@ -46,6 +51,7 @@ public class DishController {
      * @return
      */
     @PostMapping
+    @ApiOperation(value = "新增菜品接口")
     public R<String> save(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
 
@@ -64,6 +70,13 @@ public class DishController {
      * @return
      */
     @GetMapping("/page")
+    @ApiOperation(value = "菜品分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value="页码",required = true),
+            @ApiImplicitParam(name = "pageSize",value="每页记录数",required = true),
+            @ApiImplicitParam(name = "name",value="菜品名称",required = false),
+
+    })
     public R<Page> page(int page,int pageSize,String name){
 
         //构造分页构造器对象
@@ -112,6 +125,7 @@ public class DishController {
      * @return
      */
     @GetMapping("/{id}")
+    @ApiOperation(value = "套餐id查询接口")
     public R<DishDto> get(@PathVariable Long id){
 
         DishDto dishDto = dishService.getByIdWithFlavor(id);
@@ -125,6 +139,7 @@ public class DishController {
      * @return
      */
     @PutMapping
+    @ApiOperation(value = "修改菜品接口")
     public R<String> update(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
 
@@ -144,23 +159,8 @@ public class DishController {
      * @param dish
      * @return
      */
-    /*@GetMapping("/list")
-    public R<List<Dish>> list(Dish dish){
-        //构造查询条件
-        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(dish.getCategoryId() != null ,Dish::getCategoryId,dish.getCategoryId());
-        //添加条件，查询状态为1（起售状态）的菜品
-        queryWrapper.eq(Dish::getStatus,1);
-
-        //添加排序条件
-        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
-
-        List<Dish> list = dishService.list(queryWrapper);
-
-        return R.success(list);
-    }*/
-
     @GetMapping("/list")
+    @ApiOperation(value = "菜品条件查询接口")
     public R<List<DishDto>> list(Dish dish){
         List<DishDto> dishDtoList = null;
         //动态构造key
@@ -219,6 +219,7 @@ public class DishController {
      * @return
      */
     @PostMapping("/status/{status}")
+    @ApiOperation(value = "更新状态接口")
     public R changeStatus(@PathVariable int status,String ids){
         String[] idList = ids.split(",");
         for (String id : idList) {
@@ -237,6 +238,7 @@ public class DishController {
      * @return
      */
     @DeleteMapping
+    @ApiOperation(value = "删除菜品接口")
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids:{}",ids);
         dishService.removeWithFlavor(ids);

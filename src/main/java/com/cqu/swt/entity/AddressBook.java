@@ -17,7 +17,7 @@ public class AddressBook implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("id")
+    @ApiModelProperty("主键")
     private Long id;
 
 

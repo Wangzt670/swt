@@ -11,6 +11,8 @@ import com.cqu.swt.entity.SetmealDish;
 import com.cqu.swt.service.CategoryService;
 import com.cqu.swt.service.SetmealDishService;
 import com.cqu.swt.service.SetmealService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/setmeal")
 @Slf4j
+@Api(tags = "套餐管理相关接口")
+
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
@@ -38,6 +42,8 @@ public class SetmealController {
      * @param setmealDto
      * @return
      */
+    @ApiOperation(value = "新增套餐")
+
     @PostMapping
     public R save(@RequestBody SetmealDto setmealDto){
         setmealService.saveWithDish(setmealDto);
@@ -52,6 +58,8 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/page")
+    @ApiOperation(value = "套餐分页查询")
+
     public R<Page> page(int page,int pageSize,String name){
         //分页构造器对象
         Page<Setmeal> pageInfo = new Page<>(page,pageSize);
@@ -95,6 +103,8 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/{ids}")
+    @ApiOperation(value = "根据id查询套餐")
+
     public R getSetmeal(@PathVariable Long ids){
         SetmealDto setmealDto = setmealService.getSetmeal(ids);
         return R.success(setmealDto);
@@ -106,6 +116,8 @@ public class SetmealController {
      * @return
      */
     @PutMapping
+    @ApiOperation(value = "更新套餐信息")
+
     public R updateSetmeal(@RequestBody SetmealDto setmealDto){
         setmealService.updateSetmeal(setmealDto);
         return R.success("更新套餐成功!");
@@ -118,6 +130,8 @@ public class SetmealController {
      * @return
      */
     @PostMapping("/status/{status}")
+    @ApiOperation(value = "修改销售状态")
+
     public R changeStatus(@PathVariable int status,String ids){
         String[] idList = ids.split(",");
         for (String id : idList) {
@@ -131,6 +145,8 @@ public class SetmealController {
     }
 
     @DeleteMapping
+    @ApiOperation(value = "删除套餐")
+
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids:{}",ids);
 
@@ -139,6 +155,8 @@ public class SetmealController {
         return R.success("套餐数据删除成功");
     }
     @GetMapping("/list")
+    @ApiOperation(value = "套餐list")
+
     public R getList(Long categoryId,Integer status){
         LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Setmeal::getStatus,status).eq(Setmeal::getCategoryId,categoryId);
@@ -147,6 +165,7 @@ public class SetmealController {
     }
 
     @GetMapping("/dish/{id}")
+    @ApiOperation(value = "查询某道菜")
     public R getSetMeal(@PathVariable Long id){
         Setmeal setmeal = setmealService.getById(id);
         return R.success(setmeal);

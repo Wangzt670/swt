@@ -5,6 +5,9 @@ import com.cqu.swt.common.BaseContext;
 import com.cqu.swt.common.R;
 import com.cqu.swt.entity.ShoppingCart;
 import com.cqu.swt.service.ShoppingCartService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/shoppingCart")
+@Api(tags = "购物车相关接口")
 public class ShoppingCartController {
 
     @Autowired
@@ -29,6 +33,8 @@ public class ShoppingCartController {
      * @return
      */
     @PostMapping("/add")
+    @ApiOperation(value = "添加到购物车")
+    @ApiImplicitParam(name = "shoppingCart", value = "购物车", required = true)
     public R<ShoppingCart> add(@RequestBody ShoppingCart shoppingCart){
         log.info("购物车数据:{}",shoppingCart);
 
@@ -75,6 +81,7 @@ public class ShoppingCartController {
      * @return
      */
     @GetMapping("/list")
+    @ApiOperation(value = "查找")
     public R<List<ShoppingCart>> list(){
         log.info("查看购物车...");
 
@@ -92,6 +99,7 @@ public class ShoppingCartController {
      * @return
      */
     @DeleteMapping("/clean")
+    @ApiOperation(value = "清空购物车")
     public R<String> clean(){
         //SQL:delete from shopping_cart where user_id = ?
 
@@ -104,6 +112,8 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/sub")
+    @ApiOperation(value = "减少菜品")
+    @ApiImplicitParam(name = "shoppingCart", value = "购物车", required = true)
     public R<ShoppingCart> changeNumber(@RequestBody ShoppingCart shoppingCart){
 
         Long userId = BaseContext.getCurrentId();

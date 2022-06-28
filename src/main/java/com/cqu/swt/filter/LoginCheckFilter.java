@@ -43,7 +43,7 @@ public class LoginCheckFilter implements Filter {
 
                 //接口文档请求路径
                 "/doc.html",
-                "/web.jars/**",
+                "/webjars/**",
                 "/swagger-resources",
                 "/v2/api-docs"
         };

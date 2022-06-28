@@ -7,6 +7,9 @@ import com.cqu.swt.common.BaseContext;
 import com.cqu.swt.common.R;
 import com.cqu.swt.entity.AddressBook;
 import com.cqu.swt.service.AddressBookService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -20,6 +23,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/addressBook")
+@Api(tags = "导入地址簿")
 public class AddressBookController {
 
     @Autowired
@@ -29,6 +33,8 @@ public class AddressBookController {
      * 新增
      */
     @PostMapping
+    @ApiOperation(value = "存入地址簿" )
+    @ApiImplicitParam(name = "AddressBook",value = "地址簿信息",required = true)
     public R<AddressBook> save(@RequestBody AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
         log.info("addressBook:{}", addressBook);
@@ -40,6 +46,8 @@ public class AddressBookController {
      * 设置默认地址
      */
     @PutMapping("default")
+    @ApiOperation(value = "设置默认地址簿信息")
+    @ApiImplicitParam(name = "AddressBook",value = "地址簿信息",required = true)
     public R<AddressBook> setDefault(@RequestBody AddressBook addressBook) {
         log.info("addressBook:{}", addressBook);
         LambdaUpdateWrapper<AddressBook> wrapper = new LambdaUpdateWrapper<>();
@@ -58,6 +66,8 @@ public class AddressBookController {
      * 根据id查询地址
      */
     @GetMapping("/{id}")
+    @ApiOperation(value = "根据id查询地址")
+    @ApiImplicitParam(name = "id",value = "用户id",required = true)
     public R get(@PathVariable Long id) {
         AddressBook addressBook = addressBookService.getById(id);
         if (addressBook != null) {
@@ -71,6 +81,7 @@ public class AddressBookController {
      * 查询默认地址
      */
     @GetMapping("default")
+    @ApiOperation(value = "获取默认地址簿信息")
     public R<AddressBook> getDefault() {
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AddressBook::getUserId, BaseContext.getCurrentId());
@@ -90,6 +101,8 @@ public class AddressBookController {
      * 查询指定用户的全部地址
      */
     @GetMapping("/list")
+    @ApiOperation("查询地址簿信息")
+    @ApiImplicitParam(name = "AddressBook",value = "地址簿信息",required = true)
     public R<List<AddressBook>> list(AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
         log.info("addressBook:{}", addressBook);

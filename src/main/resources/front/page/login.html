@@ -25,7 +25,21 @@
                 <el-input placeholder=" 请输入邮箱号码" v-model="form.phone"  maxlength='20'/></el-input>
                 <div class="divSplit"></div>
                 <el-input placeholder=" 请输入验证码" v-model="form.code"  maxlength='20'/></el-input>
+
+                <!--<button @click.prevent="getCode()" class="code-btn" :disabled="!show">-->
+                    <!--<span v-show="show">获取验证码</span>-->
+                    <!--&lt;!&ndash;<span v-show="!show" class="count">{{count}} s</span>&ndash;&gt;-->
+                <!--</button>-->
+
                 <span @click='getCode'>获取验证码</span>
+
+                <!--<el-form-item label="短信验证" prop="phoneCode" class="pr">-->
+                    <!--<el-input style="width:400px;" placeholder="请输入您接收的短信验证码" v-model="form.phoneCode"></el-input>-->
+                    <!--<button @click.prevent="getCode()" class="code-btn" :disabled="!show">-->
+                        <!--<span v-show="show">获取验证码</span>-->
+                        <!--<span v-show="!show" class="count">{{count}} s</span>-->
+                    <!--</button>-->
+                <!--</el-form-item>-->
             </div>
             <div class="divMsg" v-if="msgFlag">邮箱输入不正确，请重新输入</div>
             <el-button type="primary" :class="{btnSubmit:1===1,btnNoPhone:!form.phone,btnPhone:form.phone}" @click="btnLogin">登录</el-button>
@@ -55,8 +69,11 @@
                 }
             },
             computed:{},
-            created(){},
-            mounted(){},
+
+            //初始值
+            // show: 'false',
+            // count: '',
+
             methods:{
                 getCode(){
                     this.form.code = ''
@@ -70,6 +87,22 @@
                     }else{
                         this.msgFlag = true
                     }
+
+                    // 验证码倒计时
+                    // if (!this.timer) {
+                    //     this.count = 60;
+                    //     this.show = false;
+                    //     this.timer = setInterval(() => {
+                    //         if (this.count > 0 && this.count <= 60) {
+                    //         this.count--;
+                    //     } else {
+                    //         this.show = true;
+                    //         clearInterval(this.timer);
+                    //         this.timer = null;
+                    //     }
+                    // }, 1000);
+                    // }
+
                 },
                 async btnLogin(){
                     if(this.form.phone && this.form.code){
@@ -90,5 +123,10 @@
                 }
             }
         })
+        let smsBtn = document.getElementById("getcode");
+        getSmsCode(smsBtn,()=>{
+            // todo:获取验证码
+        })
+
     </script>
 </html>
